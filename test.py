@@ -1,0 +1,67 @@
+
+# Darius Jones
+# Colin Hinton
+# Kira Loomis
+
+
+import RPi.GPIO as gpio
+import time 
+
+#  motors to  gpio
+ena = (5,6)
+enb = (13,19)
+in1 = 17
+in2 = 22
+in3 = 23
+in4 = 24 
+
+# encoders to gpio
+right = 16
+left =  20
+
+# setup 
+gpio.setmode(gpio.BCM)
+gpio.setup(right,gpio.IN)
+gpio.setup(left,gpio.IN)
+gpio.setup(ena[0],gpio.OUT)
+gpio.setup(ena[1],gpio.OUT)
+gpio.setup(enb[0],gpio.OUT)
+gpio.setup(enb[1],gpio.OUT)
+gpio.setup(in1,gpio.OUT)
+gpio.setup(in3,gpio.OUT)
+gpio.setup(in3,gpio.OUT)
+gpio.setup(in4,gpio.OUT)
+gpio.output(ena[0],True)
+gpio.output(ena[1],True)
+gpio.output(enb[0],True)
+gpio.output(enb[1],True)
+gpio.setwarnings(False)
+
+
+def forward(tf):
+
+	gpio.output(in1,True)
+	gpio.output(in3,False)
+	gpio.output(in3,True)
+	gpio.output(in4,False)
+	time.sleep(tf)
+	gpio.cleanup()
+
+def backward(tf):
+	gpio.output(in1,False)
+	gpio.output(in3,True)
+	gpio.output(in3,False)
+	gpio.output(in4,True)
+	time.sleep(tf)
+	gpio.cleanup()
+
+
+
+
+if __name__ == '__main__':
+	
+		
+	#print( "left encoder: %d" %gpio.input(left))
+	#print( "right encoder: %d" %gpio.input(right))
+	
+	forward(4)
