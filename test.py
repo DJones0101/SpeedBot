@@ -118,6 +118,16 @@ def gradualRightArc(tf):
 		counter += 1	
 
 
+def PWMTest(tf):
+	p = GPIO.PWM(in1, 31250)
+	q = GPIO.PWM(in3, 31250)
+	p.start(.25)
+	q.start(.25)
+	time.sleep(tf)
+	p.stop()
+	q.stop()
+
+
 
 if __name__ == '__main__':
 
@@ -127,7 +137,7 @@ if __name__ == '__main__':
 	#time.sleep(5)
 	#display.lcd_display_string("Moving forward for 5 senconds", 2)
 	#time.sleep(10)
-	gradualRightArc(5)
+	PWMTest(2)
 	#display.lcd_display_string("Moving backward for 5 senconds", 1)
 	#time.sleep(10)
 	#rightTurn(5)
