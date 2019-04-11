@@ -72,6 +72,28 @@ def leftTurn(tf):
 	gpio.output(in4,False)
 	time.sleep(tf)
 
+def gradualLeftArc(tf):
+	counter = 0
+
+	gpio.output(in2,False)
+	gpio.output(in3,True)
+	gpio.output(in4,False)
+
+
+	timeRemainig = tf
+	timeSegment = .02
+
+	while timeRemaining > 0:
+		if (counter % 2) == 0:
+			gpio.output(in1,False)
+		else:
+			gpio.output(in1, True)
+
+		time.sleep(timeSegment)
+
+		timeRemaining -= timeSegment
+		counter += 1
+
 
 
 
@@ -84,10 +106,10 @@ if __name__ == '__main__':
 	#time.sleep(5)
 	#display.lcd_display_string("Moving forward for 5 senconds", 2)
 	#time.sleep(10)
-	leftTurn(5)
+	gradualLeftArc(5)
 	#display.lcd_display_string("Moving backward for 5 senconds", 1)
 	#time.sleep(10)
-	rightTurn(5)
+	#rightTurn(5)
 	#time.sleep(10)
 	#display.lcd_clear()
 	gpio.cleanup()
