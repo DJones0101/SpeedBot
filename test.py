@@ -79,7 +79,13 @@ def leftTurn(tf):
 if __name__ == '__main__':
 
 
+
+	display.lcd_display_string(" SpeedBot", 1)
+	display.lcd_display_string(" Moving forward for 5 senconds", 2)
 	forward(5)
+	display.lcd_display_string(" Moving backward for 5 senconds", 1)
 	backward(5)
+	time.sleep(10)
+	display.lcd_clear()
 	gpio.cleanup()
 	
