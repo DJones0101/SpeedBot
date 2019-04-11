@@ -80,7 +80,7 @@ def gradualLeftArc(tf):
 	gpio.output(in4,False)
 
 
-	timeRemainig = tf
+	timeRemaining = tf
 	timeSegment = .02
 
 	while timeRemaining > 0:
