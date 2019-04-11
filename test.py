@@ -95,6 +95,27 @@ def gradualLeftArc(tf):
 		counter += 1
 
 
+def gradualRightArc(tf):
+	counter = 0
+
+	gpio.output(in1,True)
+	gpio.output(in2,False)
+	gpio.output(in4,False)
+
+
+	timeRemaining = tf
+	timeSegment = .02
+
+	while timeRemaining > 0:
+		if (counter % 2) == 0:
+			gpio.output(in3,False)
+		else:
+			gpio.output(in3, True)
+
+		time.sleep(timeSegment)
+
+		timeRemaining -= timeSegment
+		counter += 1	
 
 
 
@@ -106,7 +127,7 @@ if __name__ == '__main__':
 	#time.sleep(5)
 	#display.lcd_display_string("Moving forward for 5 senconds", 2)
 	#time.sleep(10)
-	gradualLeftArc(5)
+	gradualRightArc(5)
 	#display.lcd_display_string("Moving backward for 5 senconds", 1)
 	#time.sleep(10)
 	#rightTurn(5)
