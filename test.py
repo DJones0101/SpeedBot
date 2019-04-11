@@ -82,16 +82,3 @@ if __name__ == '__main__':
 	forward(5)
 	backward(5)
 	
-   
-    print("Writing to display")
-    display.lcd_display_string("       SpeedBot!", 1) # Write line of text to first line of display
-    display.lcd_display_string('Comp 470', 2) # Write line of text to second line of display
-    time.sleep(10)                                     # Give time for the message to be read
-    display.lcd_display_string("Stuff", 3)  # Refresh the first line of display with a different message
-    display.lcd_display_string("bye!!!", 4) 
-    time.sleep(10)                                     # Give time for the message to be read
-    display.lcd_clear()                               # Clear the display of any data
-    time.sleep(2)                                     # Give time for the message to be read
-    print("Cleaning up!")
-    display.lcd_clear()
-    gpio.cleanup()
