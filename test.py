@@ -81,4 +81,5 @@ if __name__ == '__main__':
 
 	forward(5)
 	backward(5)
+	gpio.cleanup.()
 	
