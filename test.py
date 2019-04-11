@@ -44,7 +44,6 @@ display = lcddriver.lcd()
 
 
 def forward(tf):
-
 	gpio.output(in1,True)
 	gpio.output(in2,False)
 	gpio.output(in3,True)
@@ -78,6 +77,10 @@ def leftTurn(tf):
 
 
 if __name__ == '__main__':
+
+
+	forward(5)
+	backward(5)
 	
    
     print("Writing to display")
