@@ -119,8 +119,8 @@ def gradualRightArc(tf):
 
 
 def PWMTest(tf):
-	p = GPIO.PWM(in1, 31250)
-	q = GPIO.PWM(in3, 31250)
+	p = gpio.PWM(in1, 31250)
+	q = gpio.PWM(in3, 31250)
 	p.start(.25)
 	q.start(.25)
 	time.sleep(tf)
