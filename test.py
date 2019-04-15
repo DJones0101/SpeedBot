@@ -6,6 +6,8 @@
 
 import RPi.GPIO as gpio
 import time 
+import SpeedBot.m7 as m7
+
 
 #  motors to  gpio
 ena = (5,6)
@@ -37,7 +39,7 @@ gpio.output(enb[0],True)
 gpio.output(enb[1],True)
 gpio.setwarnings(False)
 
-lefEncoder = gpio.input(left)
+leftEncoder = gpio.input(left)
 rightEncoder = gpio.input(right)
 
 
@@ -76,6 +78,6 @@ def leftTurn(tf):
 
 
 if __name__ == '__main__':
-	
+
 	
 	gpio.cleanup()
