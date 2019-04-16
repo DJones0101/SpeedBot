@@ -79,5 +79,9 @@ def leftTurn(tf):
 
 if __name__ == '__main__':
 
-	
+	count = 0
+	while True:
+		
+		print("%d  %s"  %(count,  m7.get_msg()))
+		count += 1
 	gpio.cleanup()
