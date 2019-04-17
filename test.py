@@ -73,15 +73,89 @@ def leftTurn(tf):
 	gpio.output(in4,False)
 	time.sleep(tf)
 
+def PWM_briefTest(tf):
+	# Tested version:
+	p = gpio.PWM(in1, 31250)
+	q = gpio.PWM(in3, 31250)
+	p.start(.25)
+	q.start(.25)
 
+	time.sleep(tf)
+
+	p.stop()
+	q.stop()
+
+	# # If have issues w/ continual stops, this was suggested:
+	# # p.ChangeDutyCycle(0)
+	# # q.ChangeDutyCycle(0)	
+
+def PWM_robustTest(tf):
+
+	leftForward = gpio.PWM(in1, 31250)
+	leftBackward = gpio.PWM(in2, 31250)
+	rightForward = gpio.PWM(in3, 31250)
+	rightBackward = gpio.PWM(in4, 31250)
+
+	# Forward:
+	leftForward.start(25)
+	rightForward.start(25)
+
+	time.sleep(tf)
+
+	leftForward.stop()
+	rightForward.stop()
+
+	# Backward:
+	leftBackward.start(25)
+	rightBackward.start(25)
+
+	time.sleep(tf)
+
+	leftBackward.stop()
+	rightBackward.stop()
+
+	# Right Turn
+	leftForward.start(25)
+	rightBackward.start(25)
+
+	time.sleep(tf)
+
+	leftForward.stop()
+	rightBackward.stop()
+
+	# Left Turn
+	leftBackward.start(25)
+	rightForward.start(25)
+
+	time.sleep(tf)
+
+	leftBackward.stop()
+	rightForward.stop()
+
+	# Arcs
+	# # Right Arc
+	rightForward.start(10)
+	leftForward.start(25)
+
+	time.sleep(tf)
+
+	# # Left Arc
+	rightForward.ChangeDutyCycle(25)
+	leftForward.ChangeDutyCycle(10)
+
+	time.sleep(tf)
+
+	rightForward.stop()
+	leftForward.stop()
 
 
 
 if __name__ == '__main__':
 
-	count = 0
-	while True:
-		
-		print("%d  %s"  %(count,  m7.get_msg()))
-		count += 1
+	PWM_briefTest(2)
+	#count = 0
+	#while True:
+	#	
+	#	print("%d  %s"  %(count,  m7.get_msg()))
+	#	count += 1
 	gpio.cleanup()
