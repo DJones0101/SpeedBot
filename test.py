@@ -77,8 +77,8 @@ def PWM_briefTest(tf):
 	# Tested version:
 	p = gpio.PWM(in1, 31250)
 	q = gpio.PWM(in3, 31250)
-	p.start(.25)
-	q.start(.25)
+	p.start(.75)
+	q.start(.75)
 
 	time.sleep(tf)
 
@@ -97,8 +97,8 @@ def PWM_robustTest(tf):
 	rightBackward = gpio.PWM(in4, 31250)
 
 	# Forward:
-	leftForward.start(25)
-	rightForward.start(25)
+	leftForward.start(.75)
+	rightForward.start(.75)
 
 	time.sleep(tf)
 
@@ -106,8 +106,8 @@ def PWM_robustTest(tf):
 	rightForward.stop()
 
 	# Backward:
-	leftBackward.start(25)
-	rightBackward.start(25)
+	leftBackward.start(.75)
+	rightBackward.start(.75)
 
 	time.sleep(tf)
 
@@ -115,8 +115,8 @@ def PWM_robustTest(tf):
 	rightBackward.stop()
 
 	# Right Turn
-	leftForward.start(25)
-	rightBackward.start(25)
+	leftForward.start(.75)
+	rightBackward.start(.75)
 
 	time.sleep(tf)
 
@@ -124,8 +124,8 @@ def PWM_robustTest(tf):
 	rightBackward.stop()
 
 	# Left Turn
-	leftBackward.start(25)
-	rightForward.start(25)
+	leftBackward.start(.75)
+	rightForward.start(.75)
 
 	time.sleep(tf)
 
@@ -134,14 +134,14 @@ def PWM_robustTest(tf):
 
 	# Arcs
 	# # Right Arc
-	rightForward.start(10)
-	leftForward.start(25)
+	rightForward.start(.60)
+	leftForward.start(.75)
 
 	time.sleep(tf)
 
 	# # Left Arc
-	rightForward.ChangeDutyCycle(25)
-	leftForward.ChangeDutyCycle(10)
+	rightForward.ChangeDutyCycle(.75)
+	leftForward.ChangeDutyCycle(.60)
 
 	time.sleep(tf)
 
@@ -152,7 +152,7 @@ def PWM_robustTest(tf):
 
 if __name__ == '__main__':
 
-	PWM_briefTest(2)
+	PWM_briefTest(10)
 	#count = 0
 	#while True:
 	#	
