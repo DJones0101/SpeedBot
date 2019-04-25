@@ -23,6 +23,8 @@ sensor.set_pixformat(sensor.GRAYSCALE)
 sensor.set_framesize(sensor.QQQVGA) # 80x60 (4,800 pixels) - O(N^2) max = 2,3040,000.
 sensor.skip_frames(time = 2000)     # WARNING: If you use QQVGA it may take seconds
 clock = time.clock()                # to process a frame sometimes.
+sensor.set_vflip(True)
+sensor.set_hmirror(True)
 
 while(True):
     clock.tick()
