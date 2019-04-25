@@ -50,8 +50,8 @@ while(True):
 
     if (line): img.draw_line(line.line(), color = 127)
     #print("FPS %f, mag = %s" % (clock.fps(), str(line.magnitude()) if (line) else "N/A"))
-
-    widthValue = ((img.height()//2)/((line.y2()-line.y1())/line.x2()-line.x1())) - img.width(//2)
+    slope = (line.y2()-line.y1())/(line.x2()-line.x1())
+    widthValue = (img.height()//2)/(slope) - img.width(//2)
     print("Distance from center %f" % (widthValue))
 
 # About negative rho values:
