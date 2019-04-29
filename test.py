@@ -7,40 +7,41 @@
 import RPi.GPIO as gpio
 import time 
 import SpeedBot.m7 as m7
+import SpeedBot.motors as motors
 
 
-#  motors to  gpio
-ena = (5,6)
-enb = (13,19)
-in1 = 17
-in2 = 22
-in3 = 23
-in4 = 24 
+# #  motors to  gpio
+# ena = (5,6)
+# enb = (13,19)
+# in1 = 17
+# in2 = 22
+# in3 = 23
+# in4 = 24 
 
-# encoders to gpio
-right = 16
-left =  20
+# # encoders to gpio
+# right = 16
+# left =  20
 
-# setup 
-gpio.setmode(gpio.BCM)
-gpio.setup(right,gpio.IN,pull_up_down=gpio.PUD_UP)
-gpio.setup(left,gpio.IN,pull_up_down=gpio.PUD_UP)
-gpio.setup(ena[0],gpio.OUT)
-gpio.setup(ena[1],gpio.OUT)
-gpio.setup(enb[0],gpio.OUT)
-gpio.setup(enb[1],gpio.OUT)
-gpio.setup(in1,gpio.OUT)
-gpio.setup(in2,gpio.OUT)
-gpio.setup(in3,gpio.OUT)
-gpio.setup(in4,gpio.OUT)
-gpio.output(ena[0],True)
-gpio.output(ena[1],True)
-gpio.output(enb[0],True)
-gpio.output(enb[1],True)
-gpio.setwarnings(False)
+# # setup 
+# gpio.setmode(gpio.BCM)
+# gpio.setup(right,gpio.IN,pull_up_down=gpio.PUD_UP)
+# gpio.setup(left,gpio.IN,pull_up_down=gpio.PUD_UP)
+# gpio.setup(ena[0],gpio.OUT)
+# gpio.setup(ena[1],gpio.OUT)
+# gpio.setup(enb[0],gpio.OUT)
+# gpio.setup(enb[1],gpio.OUT)
+# gpio.setup(in1,gpio.OUT)
+# gpio.setup(in2,gpio.OUT)
+# gpio.setup(in3,gpio.OUT)
+# gpio.setup(in4,gpio.OUT)
+# gpio.output(ena[0],True)
+# gpio.output(ena[1],True)
+# gpio.output(enb[0],True)
+# gpio.output(enb[1],True)
+# gpio.setwarnings(False)
 
-leftEncoder = gpio.input(left)
-rightEncoder = gpio.input(right)
+# leftEncoder = gpio.input(left)
+# rightEncoder = gpio.input(right)
 
 
 def forward(tf):
@@ -152,10 +153,13 @@ def PWM_robustTest(tf):
 
 if __name__ == '__main__':
 
-	PWM_briefTest(10)
+	#PWM_robustTest(5)
 	#count = 0
 	#while True:
 	#	
 	#	print("%d  %s"  %(count,  m7.get_msg()))
 	#	count += 1
-	gpio.cleanup()
+
+	motors.move(100,10,5)
+
+	#gpio.cleanup()
