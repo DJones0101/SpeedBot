@@ -5,43 +5,43 @@
 
 
 import RPi.GPIO as gpio
-import time 
 import SpeedBot.m7 as m7
-import SpeedBot.motors as motors
+import time 
+import serial
 
 
-# #  motors to  gpio
-# ena = (5,6)
-# enb = (13,19)
-# in1 = 17
-# in2 = 22
-# in3 = 23
-# in4 = 24 
 
-# # encoders to gpio
-# right = 16
-# left =  20
+#  motors to  gpio
+ena = (5,6)
+enb = (13,19)
+in1 = 17
+in2 = 22
+in3 = 23
+in4 = 24 
 
-# # setup 
-# gpio.setmode(gpio.BCM)
-# gpio.setup(right,gpio.IN,pull_up_down=gpio.PUD_UP)
-# gpio.setup(left,gpio.IN,pull_up_down=gpio.PUD_UP)
-# gpio.setup(ena[0],gpio.OUT)
-# gpio.setup(ena[1],gpio.OUT)
-# gpio.setup(enb[0],gpio.OUT)
-# gpio.setup(enb[1],gpio.OUT)
-# gpio.setup(in1,gpio.OUT)
-# gpio.setup(in2,gpio.OUT)
-# gpio.setup(in3,gpio.OUT)
-# gpio.setup(in4,gpio.OUT)
-# gpio.output(ena[0],True)
-# gpio.output(ena[1],True)
-# gpio.output(enb[0],True)
-# gpio.output(enb[1],True)
-# gpio.setwarnings(False)
+ #encoders to gpio
+right = 16
+left =  20
 
-# leftEncoder = gpio.input(left)
-# rightEncoder = gpio.input(right)
+ # setup 
+gpio.setmode(gpio.BCM)
+gpio.setup(right,gpio.IN,pull_up_down=gpio.PUD_UP)
+gpio.setup(left,gpio.IN,pull_up_down=gpio.PUD_UP)
+gpio.setup(ena[0],gpio.OUT)
+gpio.setup(ena[1],gpio.OUT)
+gpio.setup(enb[0],gpio.OUT)
+gpio.setup(enb[1],gpio.OUT)
+gpio.setup(in1,gpio.OUT)
+gpio.setup(in2,gpio.OUT)
+gpio.setup(in3,gpio.OUT)
+gpio.setup(in4,gpio.OUT)
+gpio.output(ena[0],True)
+gpio.output(ena[1],True)
+gpio.output(enb[0],True)
+gpio.output(enb[1],True)
+leftEncoder = gpio.input(left)
+rightEncoder = gpio.input(right)
+gpio.setwarnings(False)
 
 
 def forward(tf):
@@ -76,6 +76,7 @@ def leftTurn(tf):
 
 def PWM_briefTest(tf):
 	# Tested version:
+	gpio.setwarnings(False)
 	p = gpio.PWM(in1, 31250)
 	q = gpio.PWM(in3, 31250)
 	p.start(.75)
@@ -96,6 +97,7 @@ def PWM_robustTest(tf):
 	leftBackward = gpio.PWM(in2, 31250)
 	rightForward = gpio.PWM(in3, 31250)
 	rightBackward = gpio.PWM(in4, 31250)
+
 
 	# Forward:
 	leftForward.start(.75)
@@ -150,16 +152,30 @@ def PWM_robustTest(tf):
 	leftForward.stop()
 
 
+def get_msg():
+	with serial.Serial('/dev/ttyS0',9600) as ser:
+		ser.flushInput()
+	
+		x = ser.readline().decode()
+		return x  
+
+
 
 if __name__ == '__main__':
 
-	#PWM_robustTest(5)
-	#count = 0
-	#while True:
-	#	
-	#	print("%d  %s"  %(count,  m7.get_msg()))
-	#	count += 1
+#v	PWM_robustTest(5)
+	#PWM_briefTest(100)
+	# count = 0
+	# while True:
+		
+	# 	print("%d  %s"  %(count,  m7.get_msg()))
+	# 	count += 1
 
-	motors.move(100,10,5)
-
-	#gpio.cleanup()
+	
+	
+	
+	# print(get_msg()
+	# forward(10)
+	while True:
+		print(get_msg())
+	gpio.cleanup()

@@ -13,23 +13,17 @@ import serial
 import time
 
 
+conn = '/dev/ttyS0'
+baudRate = 9600
 
-
-
-def get_msg(baudRate):
+def get_msg():
 	#serial.Serial.open()
-	with serial.Serial(self.connection, baudRate) as ser:
+	with serial.Serial('/dev/ttyS0', 9600) as ser:
 		while ser.in_waiting:
 			time.sleep(.1)
-			ser.flushInput()
-			time.sleep(.1)
-			x = ser.readline().decode()
-			return x
+		ser.flushInput()
+		time.sleep(.1)
+		x = ser.readline().decode()
+		return x
 
-def send_msg(baudRate, msg):
-		
-		with serial.Serial(self.connection, baudRate) as ser:
-			ser.flushInput()
-			ser.flushOutput()
-			ser.write(msg)
 
