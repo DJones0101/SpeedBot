@@ -20,8 +20,6 @@ gpio.setup(in1, gpio.OUT)
 gpio.setup(in2, gpio.OUT)
 gpio.setup(in3, gpio.OUT)
 gpio.setup(in4, gpio.OUT)
-# gpio.output(ena,gpio.HIGH)
-# gpio.output(enb,gpio.HIGH)
 gpio.setwarnings(False)
 
 os.system("gpio mode 23 pwm")
@@ -31,9 +29,9 @@ os.system("gpio pwmr 4000")
 os.system("gpio pwmr 4095")
 
 
-def forward(tf):
-    command1 = "gpio pwm 23 %d" % (4000)
-    command2 = "gpio pwm 26 %d" % (3000)
+def forward(tf,duty1,duty2):
+    command1 = "gpio pwm 23 %d" % duty1
+    command2 = "gpio pwm 26 %d" % duty2
 
     os.system(command1)
     os.system(command2)
@@ -44,18 +42,6 @@ def forward(tf):
     gpio.output(in4, gpio.LOW)
     time.sleep(tf)
 
-
-def backward(tf):
-    command1 = "gpio pwm 23 %d" % (duty)
-    command2 = "gpio pwm 26 %d" % (duty)
-    os.system(command1)
-    os.system(command2)
-
-    gpio.output(in1, False)
-    gpio.output(in2, True)
-    gpio.output(in3, False)
-    gpio.output(in4, True)
-    time.sleep(tf)
 
 
 def rightTurn(tf, duty):
@@ -68,32 +54,6 @@ def rightTurn(tf, duty):
     gpio.output(in2, False)
     gpio.output(in3, False)
     gpio.output(in4, True)
-    time.sleep(tf)
-
-
-def leftTurn(tf, duty):
-    command1 = "gpio pwm 23 %d" % (duty)
-    command2 = "gpio pwm 26 %d" % (duty)
-    os.system(command1)
-    os.system(command2)
-
-    gpio.output(in1, False)
-    gpio.output(in2, True)
-    gpio.output(in3, True)
-    gpio.output(in4, False)
-    time.sleep(tf)
-
-
-def arcLeft(tf):
-    command1 = "gpio pwm 23 %d" % (4000)
-    command2 = "gpio pwm 26 %d" % (2000)
-    os.system(command1)
-    os.system(command2)
-
-    gpio.output(in1, False)
-    gpio.output(in2, True)
-    gpio.output(in3, True)
-    gpio.output(in4, False)
     time.sleep(tf)
 
 
@@ -126,4 +86,12 @@ if __name__ == '__main__':
         # print(get_msg())
         direction, magnitude = split_directions(get_msg())
         print(direction, " ", magnitude)
+        if direction == "left":
+            forward(1, 4000*magnitude, 4000)
+        elif direction == "right":
+            forward(1, 4000, magnitude*4000)
+        elif direction == "straight":
+            forward(1, 4000, 4000)
+        else:
+            rightTurn(1, 2000)
         gpio.cleanup()
