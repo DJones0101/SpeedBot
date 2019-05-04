@@ -73,7 +73,7 @@ def split_directions(string_input):
     if len(list_results) != 2:
         # error case
         direction = "ERROR: list size = %d" % (len(list_results))
-
+        return direction, magnitude
     else:
         direction = list_results[0]
         magnitude = list_results[1]
