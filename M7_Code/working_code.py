@@ -51,25 +51,25 @@ def get_turn_directions(line, img):
 
     if vertical_slope:
         if horizontal_distance_from_center < 0:
-            direction_string = "left"
+            direction_string = "left [vertical slope, neg horiz dist]"
         elif horizontal_distance_from_center == 0:
-            direction_string = "straight"
+            direction_string = "straight [vertical slope, no horiz dist]"
         else:
-            direction_string = "right"
+            direction_string = "right [vertical slope, pos horiz dist]"
     else:
         if slope < 0:
             if horizontal_distance_from_center > 0:
-                direction_string = "straight"
+                direction_string = "straight [neg slope, pos horiz dist]"
             else:
-                direction_string = "left"
+                direction_string = "left [neg slope, pos or no horiz dist]"
         else:
             if horizontal_distance_from_center < 0:
-                direction_string = "straight"
+                direction_string = "straight [neg slope, neg horiz dist]"
             else:
-                direction_string = "right"
+                direction_string = "right [neg slope, no or pos horiz dist]"
 
 
-    if robot_aligned:
+    if vertical_slope:
         string_magnitude = "0"
     else:
         string_magnitude = "%f" % (min(abs(slope / MAX_LINE_SLOPE), 1))
@@ -149,7 +149,7 @@ while True:
     #
     #    output = 90 + max(min(int(pid_output), 90), -90)
     #    print_string = "Line Ok - turn %d - line t: %d, r: %d" % (output, line.theta(), line.rho())
-        print_string = "Line OK - offset %s - slope %s" % (offset, slope)
+        print_string = "Line OK - turn %s - slope %s" % (offset, slope)
 
     else:
         print_string = "Line Lost - turn %d" % output
