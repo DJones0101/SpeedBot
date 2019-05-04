@@ -9,6 +9,7 @@ I_MIN = -0.0
 I_MAX = 0.0
 D_GAIN = 0.1
 STEERING_SERVO_INDEX = 0
+MAX_LINE_SLOPE = 12
 
 import sensor, image, time, math, pyb, lcd
 from machine import I2C, Pin
@@ -26,51 +27,6 @@ sensor.set_hmirror(True)
 sensor.skip_frames(time = 2000)
 clock = time.clock()
 
-#def line_to_theta_and_rho(line):
-#    if line.rho() < 0:
-#        if line.theta() < 90:
-#            return (math.sin(math.radians(line.theta())),
-#                math.cos(math.radians(line.theta() + 180)) * -line.rho())
-#        else:
-#            return (math.sin(math.radians(line.theta() - 180)),
-#                math.cos(math.radians(line.theta() + 180)) * -line.rho())
-#    else:
-#        if line.theta() < 90:
-#            if line.theta() < 45:
-#                return (math.sin(math.radians(180 - line.theta())),
-#                    math.cos(math.radians(line.theta())) * line.rho())
-#            else:
-#                return (math.sin(math.radians(line.theta() - 180)),
-#                    math.cos(math.radians(line.theta())) * line.rho())
-#        else:
-#            return (math.sin(math.radians(180 - line.theta())),
-#                math.cos(math.radians(line.theta())) * line.rho())
-#
-#def line_to_theta_and_rho_error(line, img):
-#    t, r = line_to_theta_and_rho(line)
-#    return (t, r - (img.width() // 2))
-
-# for magnitude checking-purposes; to be removed after testing
-def get_horizontal_offset_and_line_angle_magnitude(line, img):
-    center_x = img.width() / 2
-    center_y = img.height() / 2
-
-    horizontal_distance_from_center = 0
-    robot_aligned = False
-
-    if line.x2() - line.x1() != 0:
-        slope = (line.y2() - line.y1()) / (line.x2() - line.x1())
-        horizontal_distance_from_center = ((img.height() / 2) / slope) - (img.width() / 2)
-    else:
-        robot_aligned = True
-        horizontal_distance_from_center = line.x1() - (img.width() / 2)
-
-    string_offset = "%f" % (horizontal_distance_from_center)
-    string_slope_magnitude = ""
-    if robot_aligned:
-        string_slope_magnitude = "vertical"
-    else:
-        string_slope_magnitude = "%f" % (slope)
 
 # assumes check has already been performed on line prior to call, to
 # ensure that actually have a line => ALL ERROR HANDLING ON NOT SEEING
@@ -83,44 +39,40 @@ def get_turn_directions(line, img):
     center_y = img.height() / 2
 
     horizontal_distance_from_center = 0
-    robot_aligned = False
+    vertical_slope = False
 
     if line.x2() - line.x1() != 0:
         slope = (line.y2() - line.y1()) / (line.x2() - line.x1())
         horizontal_distance_from_center = ((img.height() / 2) / slope) - (img.width() / 2)
     else:
-        slope = 1
-        robot_aligned = True
+        slope = MAX_LINE_SLOPE
+        vertical_slope = True
         horizontal_distance_from_center = line.x1() - (img.width() / 2)
 
-    # line to left of robot
-    if horizontal_distance_from_center < 0:
-        # positive slope
-        if slope > 0:
-            direction_string = "right"
-        else:
+    if vertical_slope:
+        if horizontal_distance_from_center < 0:
             direction_string = "left"
-    # line to right of robot
-    elif horizontal_distance_from_center > 0:
-        # negative slope
-        if slope < 0:
-            direction_string = "left"
-        else:
-            direction_string = "right"
-    # line beneath robot
-    else:
-        if slope > 0:
-            direction_string = "right"
-        elif slope < 0:
-            direction_string = "left"
-        else:
+        elif horizontal_distance_from_center == 0:
             direction_string = "straight"
+        else:
+            direction_string = "right"
+    else:
+        if slope < 0:
+            if horizontal_distance_from_center > 0:
+                direction_string = "straight"
+            else:
+                direction_string = "left"
+        else:
+            if horizontal_distance_from_center < 0:
+                direction_string = "straight"
+            else:
+                direction_string = "right"
 
-    max_magnitude = 12
+
     if robot_aligned:
         string_magnitude = "0"
     else:
-        string_magnitude = "%f" % (min(abs(slope / max_magnitude), 1))
+        string_magnitude = "%f" % (min(abs(slope / MAX_LINE_SLOPE), 1))
 
 
     return direction_string, string_magnitude
