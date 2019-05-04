@@ -106,42 +106,33 @@ def get_msg():
 		x = ser.readline().decode()
 		return x  
 
+def split_directions(string_input):
+    list_results = string_input.split(",")
+    direction = ""
+    magnitude = 0
 
+    if len(list_results) != 2:
+        # error case
+        direction = "ERROR: list size = %d" % (len(list_results))
+
+    else:
+        direction = list_results[0]
+        magnitude = list_results[1]
+
+    return direction, magnitude
 
 if __name__ == '__main__':
 
-#	PWM_robustTest(5)
-	#PWM_briefTest(100)
-	# count = 0
-	# while True:
-		
-	# 	print("%d  %s"  %(count,  m7.get_msg()))
-	# 	count += 1
 
-	#forward(20)
 	while True:
-		print(get_msg())
-	
-	
-	# print(get_msg()
-	# try:
-	# 	while True:
-	# 		# for dc in range(10, 101, 5):
-	# 		# 	forward(.5, dc)
-	# 		#	print(dc)
-	# 		#for dc in range(95, 10, -5):
-	# 		#	forward(.5, dc)
-	# 		#	print(dc)
-	# 		forward(2,4000)
-	# 		print("2 seconds @ 100%")
-	# 		forward(2,2000)
-	# 		print("2 seconds @ 50%")
-	# 		forward(2,1000)
-	# 		print("2 seconds @ 25%")
-	# except KeyboardInterrupt:
-	# 	print("Ctl C pressed - ending program")
-	gpio.cleanup()
+        #print(get_msg())
+        direction, magnitude = split_directions(get_msg())
+        print(direction, " ", magnitude)
+        
+    
+	       
+     
+   
+    
 
-	#PWM_robustTest(5)
-	#while True:
-	#	print(get_msg())
+	gpio.cleanup()
