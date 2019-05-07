@@ -13,8 +13,8 @@ MAX_LINE_SLOPE = 12
 
 import sensor, image, time, math, pyb, lcd
 from machine import I2C, Pin
-# from pyb import UART
-# uart = UART(3, 9600)
+from pyb import UART
+
 
 
 
@@ -42,7 +42,7 @@ def get_turn_directions(line, img):
     vertical_slope = False
 
     if line.x2() - line.x1() != 0:
-        slope = (line.y2() - line.y1()) / (line.x2() - line.x1())
+        slope = (line.y1() - line.y2()) / (line.x1() - line.x2())
         horizontal_distance_from_center = ((img.height() / 2) / slope) - (img.width() / 2)
     else:
         slope = MAX_LINE_SLOPE
@@ -53,20 +53,20 @@ def get_turn_directions(line, img):
         if horizontal_distance_from_center < 0:
             direction_string = "left [vertical slope, neg horiz dist]"
         elif horizontal_distance_from_center == 0:
-            direction_string = "straight [vertical slope, no horiz dist]"
+            direction_string = "straight [vertical slope, 0 horiz dist]"
         else:
             direction_string = "right [vertical slope, pos horiz dist]"
     else:
-        if slope < 0:
+        if slope > 0:
             if horizontal_distance_from_center > 0:
                 direction_string = "straight [neg slope, pos horiz dist]"
             else:
-                direction_string = "left [neg slope, pos or no horiz dist]"
+                direction_string = "left [neg slope, 0 or neg horiz dist]"
         else:
             if horizontal_distance_from_center < 0:
-                direction_string = "straight [neg slope, neg horiz dist]"
+                direction_string = "straight [pos slope, neg horiz dist]"
             else:
-                direction_string = "right [neg slope, no or pos horiz dist]"
+                direction_string = "right [pos slope, 0 or pos horiz dist]"
 
 
     if vertical_slope:
@@ -74,25 +74,26 @@ def get_turn_directions(line, img):
     else:
         string_magnitude = "%f" % (min(abs(slope / MAX_LINE_SLOPE), 1))
 
+    #direction_string = "x1: %d; x2: %d, y1: %d, y2: %d" % (line.x1(), line.x2(), line.y1(), line.y2())
 
     return direction_string, string_magnitude
 #
 #def turn_instructions(horizontal_offset, line_angle_magnitude):
-#	# magnitude scale: two factors:
-#	#	1) slope of line (how much track is curving)
-#	#		=> larger factor
-#	#	2) horizontal distance between line and center (how far off from line robot is)
-#	#		=> smaller factor
+#   # magnitude scale: two factors:
+#   #   1) slope of line (how much track is curving)
+#   #       => larger factor
+#   #   2) horizontal distance between line and center (how far off from line robot is)
+#   #       => smaller factor
 #
-#	direction = "right"
-#	if horizontal_offset < 0:
-#		direction = "left"
-#	else if horizontal_offset == 0:
-#		direction = "straight"
+#   direction = "right"
+#   if horizontal_offset < 0:
+#       direction = "left"
+#   else if horizontal_offset == 0:
+#       direction = "straight"
 #
-#	# smaller slope => bigger turn; max slope, then == 0
-#	# WANT: percentage, in range from 0 to 1
-#	turn_magnitude = line_angle_magnitude
+#   # smaller slope => bigger turn; max slope, then == 0
+#   # WANT: percentage, in range from 0 to 1
+#   turn_magnitude = line_angle_magnitude
 #
 #
 #
@@ -113,7 +114,7 @@ old_time = pyb.millis()
 i_output = 0
 output = 90
 
-#uart = UART(3, 9600)
+uart = UART(3, 9600)
 
 while True:
     clock.tick()
@@ -149,14 +150,14 @@ while True:
     #
     #    output = 90 + max(min(int(pid_output), 90), -90)
     #    print_string = "Line Ok - turn %d - line t: %d, r: %d" % (output, line.theta(), line.rho())
-        print_string = "Line OK - turn %s - slope %s" % (offset, slope)
+        print_string = "%s,%s,\n" % (offset, slope)
 
     else:
-        print_string = "Line Lost - turn %d" % output
+        print_string = "bad,bad,\n"
 
     print("FPS %f, %s" % (clock.fps(), print_string))
 
     # direction, magnitude = get_turn_directions(img, line)
     # string_directions = "%s, %s" % (direction, magnitude)
-    # uart.write()
+    uart.write(print_string)
 
