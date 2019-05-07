@@ -44,6 +44,7 @@ def get_turn_directions(line, img):
     if line.x2() - line.x1() != 0:
         slope = (line.y1() - line.y2()) / (line.x1() - line.x2())
         horizontal_distance_from_center = ((img.height() / 2) / slope) - (img.width() / 2)
+        vertical_distance_from_center = (slope * (img.width() / 2)) - (img.height() / 2)
     else:
         slope = MAX_LINE_SLOPE
         vertical_slope = True
@@ -57,17 +58,18 @@ def get_turn_directions(line, img):
         else:
             direction_string = "right [vertical slope, pos horiz dist]"
     else:
+        # actually a negative slope, camera inverting for some reason
         if slope > 0:
-            if horizontal_distance_from_center > 0:
-                direction_string = "straight [neg slope, pos horiz dist]"
+            if vertical_distance_from_center > 0:
+                direction_string = "straight [neg slope, pos vert dist]"
             else:
-                direction_string = "left [neg slope, 0 or neg horiz dist]"
+                direction_string = "left [neg slope, neg or 0 vert dist]"
+        # actually a positive slope
         else:
-            if horizontal_distance_from_center < 0:
-                direction_string = "straight [pos slope, neg horiz dist]"
+            if vertical_distance_from_center > 0:
+                direction_string = "straight [pos slope, neg vert dist]"
             else:
-                direction_string = "right [pos slope, 0 or pos horiz dist]"
-
+                direction_string = "right [pos slope, 0 or pos vert dist]"
 
     if vertical_slope:
         string_magnitude = "0"
