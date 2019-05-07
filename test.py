@@ -81,8 +81,7 @@ def split_directions(string_input):
 
 
 if __name__ == '__main__':
-
-        try:
+    try:
         while True:
             commands = get_msg()
             print(commands)
