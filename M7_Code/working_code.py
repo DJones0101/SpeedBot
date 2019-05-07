@@ -52,24 +52,24 @@ def get_turn_directions(line, img):
 
     if vertical_slope:
         if horizontal_distance_from_center < 0:
-            direction_string = "left [vertical slope, neg horiz dist]"
+            direction_string = "left"
         elif horizontal_distance_from_center == 0:
-            direction_string = "straight [vertical slope, 0 horiz dist]"
+            direction_string = "straight"
         else:
-            direction_string = "right [vertical slope, pos horiz dist]"
+            direction_string = "right"
     else:
         # actually a negative slope, camera inverting for some reason
         if slope > 0:
             if vertical_distance_from_center > 0:
-                direction_string = "straight [neg slope, pos vert dist]"
+                direction_string = "straight"
             else:
-                direction_string = "left [neg slope, neg or 0 vert dist]"
+                direction_string = "left"
         # actually a positive slope
         else:
             if vertical_distance_from_center > 0:
-                direction_string = "straight [pos slope, neg vert dist]"
+                direction_string = "straight"
             else:
-                direction_string = "right [pos slope, 0 or pos vert dist]"
+                direction_string = "right"
 
     if vertical_slope:
         string_magnitude = "0"
@@ -152,7 +152,7 @@ while True:
     #
     #    output = 90 + max(min(int(pid_output), 90), -90)
     #    print_string = "Line Ok - turn %d - line t: %d, r: %d" % (output, line.theta(), line.rho())
-        print_string = "%s,%s,\n" % (offset, slope)
+        #print_string = "%s,%s,\n" % (offset, slope)
 
     else:
         print_string = "bad,bad,\n"
