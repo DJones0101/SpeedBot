@@ -43,8 +43,12 @@ def get_turn_directions(line, img):
 
     if line.x2() - line.x1() != 0:
         slope = (line.y1() - line.y2()) / (line.x1() - line.x2())
-        horizontal_distance_from_center = ((img.height() / 2) / slope) - (img.width() / 2)
-        vertical_distance_from_center = (slope * (img.width() / 2)) - (img.height() / 2)
+        # y = mx + b => b = y-mx
+        y_intercept = line.y1() - (slope * line.x1())
+        #x = (y-b) / m
+        horizontal_distance_from_center = (((img.height() / 2) - y_intercept)/ slope) - (img.width() / 2)
+        # y = mx + b
+        vertical_distance_from_center = ((slope * (img.width() / 2)) + y_intercept) - (img.height() / 2)
     else:
         slope = MAX_LINE_SLOPE
         vertical_slope = True
@@ -108,7 +112,7 @@ def draw_crosshair(img):
     r = (pyb.rng() % 127) + 128
     g = (pyb.rng() % 127) + 128
     b = (pyb.rng() % 127) + 128
-    img.draw_cross(x, y, color = (r, g, b), size = 10, thickness = 2)
+    img.draw_cross(x, y, color = (r, g, b), size = 3, thickness = 1)
 
 
 old_result = 0
@@ -155,7 +159,7 @@ while True:
         #print_string = "%s,%s,\n" % (offset, slope)
 
     else:
-        print_string = "bad,bad,\n"
+        print_string = "bad,bad,\r"
 
     print("FPS %f, %s" % (clock.fps(), print_string))
 
