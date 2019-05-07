@@ -82,16 +82,19 @@ def split_directions(string_input):
 
 if __name__ == '__main__':
 
-    while True:
-        # print(get_msg())
-        direction, magnitude = split_directions(get_msg())
-        print(direction, " ", magnitude)
-        if direction == "left":
-            forward(1, 4000*magnitude, 4000)
-        elif direction == "right":
-            forward(1, 4000, magnitude*4000)
-        elif direction == "straight":
-            forward(1, 4000, 4000)
-        else:
-            rightTurn(1, 2000)
+        try:
+        while True:
+            commands = get_msg()
+            print(commands)
+            direction, magnitude = split_directions(commands)
+            print(direction, " ", magnitude)
+            if direction == "left":
+                forward(1, 4000*magnitude, 4000)
+            elif direction == "right":
+                forward(1, 4000, magnitude*4000)
+            elif direction == "straight":
+                forward(1, 4000, 4000)
+            else:
+                rightTurn(1, 2000)
+    except KeyboardInterrupt:
         gpio.cleanup()
