@@ -29,7 +29,7 @@ os.system("gpio pwmr 4000")
 os.system("gpio pwmr 4095")
 
 
-def forward(tf,duty1,duty2):
+def forward(tf, duty1, duty2):
     command1 = "gpio pwm 23 %d" % duty1
     command2 = "gpio pwm 26 %d" % duty2
 
@@ -42,6 +42,19 @@ def forward(tf,duty1,duty2):
     gpio.output(in4, gpio.LOW)
     time.sleep(tf)
 
+
+def stop(tf):
+    command1 = "gpio pwm 23 %d" % 0
+    command2 = "gpio pwm 26 %d" % 0
+
+    os.system(command1)
+    os.system(command2)
+
+    gpio.output(in1, gpio.LOW)
+    gpio.output(in2, gpio.LOW)
+    gpio.output(in3, gpio.LOW)
+    gpio.output(in4, gpio.LOW)
+    time.sleep(tf)
 
 
 def rightTurn(tf, duty):
@@ -69,8 +82,9 @@ def split_directions(string_input):
     list_results = string_input.split(",")
     direction = ""
     magnitude = 0
-
-    if len(list_results) != 2:
+    # do we need dummy variable for /n or /r
+    # should it be != 4 
+    if len(list_results) != 3:
         # error case
         direction = "ERROR: list size = %d" % (len(list_results))
         return direction, magnitude
@@ -87,13 +101,15 @@ if __name__ == '__main__':
             print(commands)
             direction, magnitude = split_directions(commands)
             print(direction, " ", magnitude)
-            if direction == "left":
-                forward(1, 4000*magnitude, 4000)
-            elif direction == "right":
-                forward(1, 4000, magnitude*4000)
-            elif direction == "straight":
+            if direction == "left" or direction == "right" or direction == "straight":
                 forward(1, 4000, 4000)
+                # previous left block, change back after testing
+            # elif direction == "right":
+            #     forward(1, 4000, magnitude * 4000)
+            # elif direction == "straight":
+            #     forward(1, 4000, 4000)
             else:
                 rightTurn(1, 2000)
+                stop(1)
     except KeyboardInterrupt:
         gpio.cleanup()
