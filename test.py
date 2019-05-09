@@ -28,6 +28,8 @@ os.system("gpio pwm-ms")
 os.system("gpio pwmr 4000")
 os.system("gpio pwmr 4095")
 
+error_count = 0
+
 
 def forward(tf, duty1, duty2):
     command1 = "gpio pwm 23 %d" % duty1
@@ -109,7 +111,11 @@ if __name__ == '__main__':
             # elif direction == "straight":
             #     forward(1, 4000, 4000)
             else:
-                rightTurn(1, 2000)
-                stop(1)
+                if error_count >= 3:
+                    rightTurn(1, 2000)
+                    stop(1)
+                    error_count = 0
+                else:
+                    error_count += 1
     except KeyboardInterrupt:
         gpio.cleanup()
