@@ -28,6 +28,8 @@ os.system("gpio pwm-ms")
 os.system("gpio pwmr 4000")
 os.system("gpio pwmr 4095")
 
+error_count = 0
+
 
 def forward(tf, duty1, duty2):
     command1 = "gpio pwm 23 %d" % duty1
@@ -70,12 +72,21 @@ def rightTurn(tf, duty):
     time.sleep(tf)
 
 
-def get_msg():
-    with serial.Serial('/dev/ttyS0', 9600) as ser:
-        ser.flushInput()
 
-        x = ser.readline().decode()
-        return x
+def get_msg():
+    with serial.Serial('/dev/ttyS0', 9600,timeout=2.0) as ser:
+        msg = []
+        count = 0 
+        ser.flushInput()
+        while True:    
+            msg.append(ser.read(1).decode())
+            time.sleep(0.01)
+            if msg[count] == '\n':
+                #print(msg)
+                break
+            count += 1            
+        
+        return "".join(msg)
 
 
 def split_directions(string_input):
@@ -109,7 +120,11 @@ if __name__ == '__main__':
             # elif direction == "straight":
             #     forward(1, 4000, 4000)
             else:
-                rightTurn(1, 2000)
-                stop(1)
+                if error_count >= 3:
+                    rightTurn(1, 2000)
+                    stop(1)
+                    error_count = 0
+                else:
+                    error_count += 1
     except KeyboardInterrupt:
         gpio.cleanup()
