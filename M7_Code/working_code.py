@@ -15,104 +15,64 @@ import sensor, image, time, math, pyb, lcd
 from machine import I2C, Pin
 from pyb import UART
 
-
-
-
-
 sensor.reset()
 sensor.set_pixformat(sensor.GRAYSCALE)
 sensor.set_framesize(sensor.QQQVGA)
 sensor.set_vflip(True)
 sensor.set_hmirror(True)
-sensor.skip_frames(time = 2000)
+sensor.skip_frames(time=2000)
 clock = time.clock()
 
 
 # assumes check has already been performed on line prior to call, to
 # ensure that actually have a line => ALL ERROR HANDLING ON NOT SEEING
 # LINE SHOULD BE PERFORMED PRIOR TO CALL
-def get_turn_directions(line, img):
+
+def find_error_distance(line, img):
     direction_string = ""
     magnitude_string = ""
-
-    center_x = img.width() / 2
-    center_y = img.height() / 2
-
-    horizontal_distance_from_center = 0
-    vertical_slope = False
 
     if line.x2() - line.x1() != 0:
         slope = (line.y1() - line.y2()) / (line.x1() - line.x2())
         # y = mx + b => b = y-mx
         y_intercept = line.y1() - (slope * line.x1())
-        #x = (y-b) / m
-        horizontal_distance_from_center = (((img.height() / 2) - y_intercept)/ slope) - (img.width() / 2)
-        # y = mx + b
-        vertical_distance_from_center = ((slope * (img.width() / 2)) + y_intercept) - (img.height() / 2)
-    else:
-        slope = MAX_LINE_SLOPE
-        vertical_slope = True
-        horizontal_distance_from_center = line.x1() - (img.width() / 2)
-
-    if vertical_slope:
-        if horizontal_distance_from_center < 0:
-            direction_string = "left"
-        elif horizontal_distance_from_center == 0:
-            direction_string = "straight"
+        # x = (y-b) / m
+        error_position = ((img.height() - y_intercept) / slope)
+        if error_position == 0:
+            direction_string = "s"
+            magnitude_string = 0
+        elif error_position > (img.width() / 2):
+            direction_string = "r"
+            error_position = error_position - img.width() / 2
+            magnitude_string = error_position
         else:
-            direction_string = "right"
+            direction_string = "l"
+            error_position = img.width() / 2 - error_position
+            magnitude_string = error_position
     else:
-        # actually a negative slope, camera inverting for some reason
-        if slope > 0:
-            if vertical_distance_from_center > 0:
-                direction_string = "straight"
-            else:
-                direction_string = "left"
-        # actually a positive slope
+        if line.x1() > (img.width() / 2):
+            direction_string = "r"
+            error_position = line.x1() - img.width() / 2
+            magnitude_string = error_position
+        elif line.x1() < (img.width() / 2):
+            direction_string = "l"
+            error_position = img.width() / 2 - line.x1()
+            magnitude_string = error_position
         else:
-            if vertical_distance_from_center > 0:
-                direction_string = "straight"
-            else:
-                direction_string = "right"
+            direction_string = "s"
+            magnitude_string = 0
 
-    if vertical_slope:
-        string_magnitude = "0"
-    else:
-        string_magnitude = "%f" % (min(abs(slope / MAX_LINE_SLOPE), 1))
+    return direction_string, magnitude_string
 
-    #direction_string = "x1: %d; x2: %d, y1: %d, y2: %d" % (line.x1(), line.x2(), line.y1(), line.y2())
-
-    return direction_string, string_magnitude
-#
-#def turn_instructions(horizontal_offset, line_angle_magnitude):
-#   # magnitude scale: two factors:
-#   #   1) slope of line (how much track is curving)
-#   #       => larger factor
-#   #   2) horizontal distance between line and center (how far off from line robot is)
-#   #       => smaller factor
-#
-#   direction = "right"
-#   if horizontal_offset < 0:
-#       direction = "left"
-#   else if horizontal_offset == 0:
-#       direction = "straight"
-#
-#   # smaller slope => bigger turn; max slope, then == 0
-#   # WANT: percentage, in range from 0 to 1
-#   turn_magnitude = line_angle_magnitude
-#
-#
-#
-#
 
 def draw_crosshair(img):
     # for i in range(10):
     x = img.width() // 2
-    y = img.height() // 2
+    y = img.height() # crosshair may break
     r = (pyb.rng() % 127) + 128
     g = (pyb.rng() % 127) + 128
     b = (pyb.rng() % 127) + 128
-    img.draw_cross(x, y, color = (r, g, b), size = 3, thickness = 1)
+    img.draw_cross(x, y, color=(r, g, b), size=3, thickness=1)
 
 
 old_result = 0
@@ -138,25 +98,14 @@ while True:
         img.draw_line(line.line(), color=127)
 
         # for testing purposes, to be ultimately replaced w/turn direction call
-        offset, slope = get_turn_directions(line, img)
-
-    #    t, r = line_to_theta_and_rho_error(line, img)
-    #    new_result = (t * THETA_GAIN) + (r * RHO_GAIN)
-    #    delta_result = new_result - old_result
-    #    old_result = new_result
+        direction, error_model = find_error_distance(line, img)
+        magnitude = "%.6f" % (error_model / (10 ** 6))
 
         new_time = pyb.millis()
         delta_time = new_time - old_time
         old_time = new_time
 
-    #    p_output = new_result
-    #    i_output = max(min(i_output + new_result, I_MAX), I_MIN)
-    #    d_output = (delta_result * 1000) / delta_time
-    #    pid_output = (P_GAIN * p_output) + (I_GAIN * i_output) + (D_GAIN * d_output)
-    #
-    #    output = 90 + max(min(int(pid_output), 90), -90)
-    #    print_string = "Line Ok - turn %d - line t: %d, r: %d" % (output, line.theta(), line.rho())
-        #print_string = "%s,%s,\n" % (offset, slope)
+        print_string = "%s,%s,\n" % (direction, magnitude)
 
     else:
         print_string = "bad,bad,\r"
@@ -166,4 +115,3 @@ while True:
     # direction, magnitude = get_turn_directions(img, line)
     # string_directions = "%s, %s" % (direction, magnitude)
     uart.write(print_string)
-
