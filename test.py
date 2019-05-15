@@ -6,15 +6,11 @@ import RPi.GPIO as gpio
 import time
 import serial
 
-#  motors to  gpio
-# ena = 13
-# enb = 12
 in1 = 17
 in2 = 22
 in3 = 23
 in4 = 24
 
-# setup
 gpio.setmode(gpio.BCM)
 gpio.setup(in1, gpio.OUT)
 gpio.setup(in2, gpio.OUT)
@@ -25,8 +21,8 @@ gpio.setwarnings(False)
 os.system("gpio mode 23 pwm")
 os.system("gpio mode 26 pwm")
 os.system("gpio pwm-ms")
-os.system("gpio pwmr 4000")
-os.system("gpio pwmr 4095") 
+os.system("gpio pwmr 100")
+os.system("gpio pwmc 82") 
 
 
 error_count = 0
@@ -37,15 +33,14 @@ def forward(tf, duty1, duty2):
     
     command1 = "gpio pwm 23 %d" % duty1
     command2 = "gpio pwm 26 %d" % duty2
-
     os.system(command1)
     os.system(command2)
-
     gpio.output(in1, gpio.HIGH)
     gpio.output(in2, gpio.LOW)
     gpio.output(in3, gpio.HIGH)
     gpio.output(in4, gpio.LOW)
-    time.sleep(1)
+    time.sleep(tf)
+
 
 
     
@@ -119,8 +114,9 @@ def split_directions(string_input):
 
 
 if __name__ == '__main__':
-    stop(1)
+   # stop(1)
     try:
+        
         while True:
             commands = get_msg()
 
@@ -145,20 +141,21 @@ if __name__ == '__main__':
             if direction == "r":
                 magnitude = 0 - magnitude
 
-            k = 225
-            v = 3000 
+            k = 2
+            v = 45
             l = .15
-            v_r = min(v + (k*magnitude*l)/2, 4000)
-            v_l = .9 * min(v - (k*magnitude*l)/2, 4000)
+            v_r = min(v + (k*magnitude*l)/2, 100)
+            v_l = .9 * min(v - (k*magnitude*l)/2, 100)
             print("k: %f, v: %d, v_r %d: . v_l %d: , " %(k, v, v_r, v_l))
 
             v_r = max(v_r, 0)
             v_l = max(v_l, 0)
             # vleft_offset = 3000
             # vright_offset = 3350
+            # print(v_r,v_l)
 
             forward(.25,v_l,v_r)
-            # forward(.25,3000,3350)
+            #forward(.25,4000,4000)
 
 
             # else:
